@@ -1,0 +1,135 @@
+/* Reset and base styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+    background-color: #1e1e1e; /* Dark theme background */
+    color: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+main {
+    width: 100%;
+    max-width: 400px; /* Responsive max-width */
+    margin: 0 auto;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 2rem;
+    color: #ffffff;
+}
+
+.calculator {
+    background-color: #2d2d2d; /* Display background */
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); /* Modern card-based shadow */
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.display {
+    background-color: #2d2d2d;
+    color: #ffffff;
+    font-size: 2.5rem;
+    text-align: right;
+    padding: 15px;
+    border-radius: 8px;
+    min-height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    overflow: hidden;
+    word-break: break-all;
+    border: 1px solid #3a3a3a;
+}
+
+.button-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* CSS Grid with 4 columns */
+    gap: 12px;
+}
+
+.button-grid button {
+    background-color: #3a3a3a; /* Default button color */
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.5rem;
+    padding: 20px;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+    outline: none;
+}
+
+.button-grid button:hover {
+    background-color: #4a4a4a; /* Hover state */
+}
+
+.button-grid button:active {
+    transform: scale(0.95); /* Active state */
+}
+
+/* Operator buttons */
+.button-grid button[data-value="/"],
+.button-grid button[data-value="*"],
+.button-grid button[data-value="-"],
+.button-grid button[data-value="+"] {
+    background-color: #ff9500; /* Orange for operators */
+}
+
+.button-grid button[data-value="/"]:hover,
+.button-grid button[data-value="*"]:hover,
+.button-grid button[data-value="-"]:hover,
+.button-grid button[data-value="+"]:hover {
+    background-color: #ffaa33;
+}
+
+/* Equals button */
+.button-grid button[data-value="="] {
+    background-color: #34c759; /* Green for equals */
+}
+
+.button-grid button[data-value="="]:hover {
+    background-color: #5cd97e;
+}
+
+/* Clear button */
+.button-grid button[data-value="C"] {
+    background-color: #ff3b30; /* Red for clear, as accent */
+}
+
+.button-grid button[data-value="C"]:hover {
+    background-color: #ff5e54;
+}
+
+/* Responsive adjustments for mobile */
+@media (max-width: 480px) {
+    .calculator {
+        padding: 15px;
+    }
+    .display {
+        font-size: 2rem;
+        min-height: 70px;
+        padding: 10px;
+    }
+    .button-grid button {
+        font-size: 1.3rem;
+        padding: 15px;
+    }
+    h1 {
+        font-size: 1.8rem;
+    }
+}
+
