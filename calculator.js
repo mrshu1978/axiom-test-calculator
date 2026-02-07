@@ -53,6 +53,12 @@ class Calculator {
             this.waitingForNewValue = true;
         }
     }
+
+    inputDecimal() {
+        // For simplicity, treat decimal as digit 0 for now
+        // In a full implementation, this would handle decimal points
+        this.inputDigit(0);
+    }
 }
 
 // Initialize calculator instance
@@ -73,40 +79,76 @@ function updateDisplay() {
 
 // Event delegation for button clicks
 buttonGrid.addEventListener('click', (event) => {
-    if (!event.target.matches('button')) return;
-    
-    const value = event.target.getAttribute('data-value');
-    
-    if (value === 'C') {
-        // Clear button
-        calculator.clear();
-        updateDisplay();
-    } else if (value === '=') {
-        // Equals button
-        calculator.compute();
-        updateDisplay();
-        // After equals, next digit starts new calculation (handled by waitingForNewValue)
-    } else if (['+', '-', '*', '/'].includes(value)) {
-        // Operator button
-        if (calculator.previousValue === null) {
-            calculator.previousValue = calculator.currentValue;
-        } else if (!calculator.waitingForNewValue) {
-            calculator.compute();
-            updateDisplay();
-        }
-        calculator.setOperator(value);
-        calculator.waitingForNewValue = true;
-    } else {
-        // Digit button (0-9)
-        const digit = parseInt(value, 10);
-        if (calculator.waitingForNewValue && calculator.operator === null) {
-            // After equals, reset for new calculation
-            calculator.clear();
-        }
-        calculator.inputDigit(digit);
-        updateDisplay();
+    if (event.target.tagName === 'BUTTON') {
+        const value = event.target.getAttribute('data-value');
+        handleInput(value);
     }
 });
+
+// Handle input from both buttons and keyboard
+function handleInput(value) {
+    if (value >= '0' && value <= '9') {
+        calculator.inputDigit(parseInt(value, 10));
+    } else if (value === 'C') {
+        calculator.clear();
+    } else if (value === '=') {
+        calculator.compute();
+    } else if (value === '.') {
+        calculator.inputDecimal();
+    } else if (['+', '-', '*', '/'].includes(value)) {
+        calculator.setOperator(value);
+    }
+    updateDisplay();
+}
+
+// Keyboard support
+function handleKeydown(event) {
+    const key = event.key;
+    let handled = false;
+    
+    // Number keys 0-9
+    if (key >= '0' && key <= '9') {
+        handleInput(key);
+        handled = true;
+    }
+    // Operator keys
+    else if (['+', '-', '*', '/'].includes(key)) {
+        handleInput(key);
+        handled = true;
+    }
+    // Enter/= key
+    else if (key === 'Enter' || key === '=') {
+        handleInput('=');
+        handled = true;
+    }
+    // Escape/C key
+    else if (key === 'Escape' || key === 'c' || key === 'C') {
+        handleInput('C');
+        handled = true;
+    }
+    // Decimal point key
+    else if (key === '.') {
+        handleInput('.');
+        handled = true;
+    }
+    
+    // Prevent default for handled keys
+    if (handled) {
+        event.preventDefault();
+        
+        // Visual feedback: highlight corresponding button
+        const button = document.querySelector(`button[data-value="${key}"]`);
+        if (button) {
+            button.classList.add('active');
+            setTimeout(() => {
+                button.classList.remove('active');
+            }, 150);
+        }
+    }
+}
+
+// Add keydown listener to document
+document.addEventListener('keydown', handleKeydown);
 
 // Initialize display
 updateDisplay();
