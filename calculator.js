@@ -64,7 +64,11 @@ const buttonGrid = document.querySelector('.button-grid');
 
 // Update display function
 function updateDisplay() {
-    display.textContent = calculator.currentValue;
+    if (calculator.currentValue === -1) {
+        display.textContent = 'Error';
+    } else {
+        display.textContent = calculator.currentValue;
+    }
 }
 
 // Event delegation for button clicks
@@ -73,36 +77,36 @@ buttonGrid.addEventListener('click', (event) => {
     
     const value = event.target.getAttribute('data-value');
     
-    if (value >= '0' && value <= '9') {
-        // Digit button
-        calculator.inputDigit(parseInt(value, 10));
-        updateDisplay();
-    } else if (value === '+' || value === '-' || value === '*' || value === '/') {
-        // Operator button
-        if (calculator.previousValue === null) {
-            calculator.previousValue = calculator.currentValue;
-        } else if (!calculator.waitingForNewValue) {
-            calculator.compute();
-            calculator.previousValue = calculator.currentValue;
-        }
-        calculator.setOperator(value);
-        calculator.waitingForNewValue = true;
+    if (value === 'C') {
+        // Clear button
+        calculator.clear();
         updateDisplay();
     } else if (value === '=') {
         // Equals button
         calculator.compute();
         updateDisplay();
-    } else if (value === 'C') {
-        // Clear button
-        calculator.clear();
+        // After equals, next digit starts new calculation (handled by waitingForNewValue)
+    } else if (['+', '-', '*', '/'].includes(value)) {
+        // Operator button
+        if (calculator.previousValue === null) {
+            calculator.previousValue = calculator.currentValue;
+        } else if (!calculator.waitingForNewValue) {
+            calculator.compute();
+            updateDisplay();
+        }
+        calculator.setOperator(value);
+        calculator.waitingForNewValue = true;
+    } else {
+        // Digit button (0-9)
+        const digit = parseInt(value, 10);
+        if (calculator.waitingForNewValue && calculator.operator === null) {
+            // After equals, reset for new calculation
+            calculator.clear();
+        }
+        calculator.inputDigit(digit);
         updateDisplay();
     }
 });
 
-// Initial display update
+// Initialize display
 updateDisplay();
-
-// Export for potential use in other modules if needed
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = Calculator;
-}
